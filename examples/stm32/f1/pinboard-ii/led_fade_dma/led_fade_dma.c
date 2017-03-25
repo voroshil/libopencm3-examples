@@ -50,6 +50,9 @@ static void clock_setup(void){
   /* Enable TIM2 clock for PWM output. */
   rcc_periph_clock_enable(RCC_TIM2);
 
+  /* Enable TIM3 clock for fade. */
+  rcc_periph_clock_enable(RCC_TIM3);
+
   /* Enable DMA1 clock */
   rcc_periph_clock_enable(RCC_DMA1);
 }
@@ -67,7 +70,7 @@ static void pwm_timer_setup(void){
   timer_reset(TIM2);
   timer_set_mode(TIM2, TIM_CR1_CKD_CK_INT,
 		       TIM_CR1_CMS_CENTER_1, TIM_CR1_DIR_UP);
-  timer_set_period(TIM2, 128); // ~ 250kHz PWM output in center-aligned mode
+  timer_set_period(TIM2, 256); // ~ 250kHz PWM output in center-aligned mode
   timer_enable_break_main_output(TIM2);
 
   timer_set_oc_mode(TIM2, TIM_OC2, TIM_OCM_PWM1);
@@ -127,7 +130,7 @@ static void fade_timer_setup(void){
   timer_reset(TIM3);
   timer_set_mode(TIM3, TIM_CR1_CKD_CK_INT,
 		       TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
-  timer_set_prescaler(TIM2, 624); // 115.2kHz
+  timer_set_prescaler(TIM3, 624); // 115.2kHz
   timer_set_period(TIM3, 450); //  256Hz in edge-aligned mode
 
   timer_set_oc_mode(TIM3, TIM_OC1, TIM_OCM_PWM1); // DMA channel 6
