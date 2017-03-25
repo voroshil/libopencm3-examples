@@ -20,6 +20,8 @@
 
 BINARY = lcd_hd44780
 
+OBJS += hd44780.o
+
 LDSCRIPT = ../pinboard-ii.ld
 
 include ../../Makefile.include
