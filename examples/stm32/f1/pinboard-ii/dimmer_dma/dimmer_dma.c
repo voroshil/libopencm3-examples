@@ -20,7 +20,7 @@ static void clock_setup(void){
   /* Enable DMA1 clock */
   rcc_periph_clock_enable(RCC_DMA1);
 
-  /* Enable DMA1 clock */
+  /* Enable ADC clock */
   rcc_periph_clock_enable(RCC_ADC1);
 }
 
@@ -82,6 +82,7 @@ static void dma_setup(void){
   dma_set_number_of_data(DMA1, DMA_CHANNEL1, 1);
   dma_set_peripheral_size(DMA1, DMA_CHANNEL1, DMA_CCR_PSIZE_16BIT);
   dma_set_memory_size(DMA1, DMA_CHANNEL1, DMA_CCR_MSIZE_16BIT);
+  dma_enable_circular_mode(DMA1, DMA_CHANNEL1);
   dma_enable_channel(DMA1, DMA_CHANNEL1);
 
   dma_channel_reset(DMA1, DMA_CHANNEL3);
@@ -93,6 +94,7 @@ static void dma_setup(void){
   dma_set_number_of_data(DMA1, DMA_CHANNEL3, 1);
   dma_set_peripheral_size(DMA1, DMA_CHANNEL3, DMA_CCR_PSIZE_16BIT);
   dma_set_memory_size(DMA1, DMA_CHANNEL3, DMA_CCR_MSIZE_16BIT);
+  dma_enable_circular_mode(DMA1, DMA_CHANNEL3);
   dma_enable_channel(DMA1, DMA_CHANNEL3);
 }
 
@@ -102,8 +104,10 @@ static void timer_setup(void){
 		       TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
   timer_set_prescaler(TIM1, 624); // 115.2kHz
   timer_set_period(TIM1, 450); //  256Hz in edge-aligned mode
+  timer_enable_break_main_output(TIM1);
   timer_set_oc_mode(TIM1, TIM_OC1, TIM_OCM_PWM1); 
   timer_set_oc_value(TIM1, TIM_OC1, 100);
+  timer_enable_oc_output(TIM1, TIM_OC1);
   timer_set_master_mode(TIM1, TIM_CR2_MMS_COMPARE_OC1REF);
 
   timer_set_oc_mode(TIM1, TIM_OC2, TIM_OCM_PWM1); 
