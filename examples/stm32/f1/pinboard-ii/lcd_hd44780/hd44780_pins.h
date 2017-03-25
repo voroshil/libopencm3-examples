@@ -1,8 +1,8 @@
 #ifndef _H_HD44780_PINS_H_
 #define _H_HD44780_PINS_H_
 
-//#define LCD_BUS_4BIT
-#define LCD_BUS_8BIT
+#define LCD_BUS_4BIT
+//#define LCD_BUS_8BIT
 
 #define RCC_LCD_CTRL  RCC_GPIOB
 #define LCD_CTRL_BANK GPIOB
