@@ -67,5 +67,6 @@ void onewire_handler();
 void onewire_temp_handler();
 void onewire_scan_handler();
 uint8_t onewire_reset();
+int16_t ow_unpack_temp(uint8_t *rom);
 
 #endif  // _H_ONEWIRE_H_

@@ -25,13 +25,11 @@ int main(void){
 
       ow_receive_bytes(ow_data_array, 9);
   
-      temperature = gettemp();
+      temperature = ow_unpack_temp(ow_data_array);
       usart_print("Temperature:");
-      usart_decimal(temperature);
-      usart_print("\n");
+      usart_decimal(temperature,1);
+      usart_print(" C\n");
     }
-
-
   }
 
   while(1){}

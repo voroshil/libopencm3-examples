@@ -94,3 +94,56 @@ void ow_skip()
   ow_send_byte(OW_SKIP_ROM);           // Skip ROM
 }
 
+// 9 bytes long
+void ow_crc8(uint8_t data, uint8_t crc){
+  for(int i=0; i<8; i++){
+    uint8_t bit0 = (crc ^ data) & 0x01;
+    crc = (crc >> 1) & 0x7F;
+    if (bit0) {
+      crc = crc ^ 0x8C; // (0x119 >> 1), X^8+X^5+X^4+X^0
+    }
+    data = data >> 1;
+  }
+  return crc;
+}
+/*
+ * 0 8 - themperature LSB
+ * 1 7 - themperature MSB (all higher bits are sign)
+ * 2 6 - T_H
+ * 3 5 - T_L
+ * 4 4 - B20: Configuration register (only bits 6/5 valid: 9..12 bits resolution); 0xff for S20
+ * 5 3 - 0xff (reserved)
+ * 6 2 - (reserved for B20); S20: COUNT_REMAIN (0x0c)
+ * 7 1 - COUNT PER DEGR (0x10)
+ * 8 0 - CRC
+ */
+static const uint8_t fractions[] = {0, 1, 1, 2, 3, 3, 4, 4}
+int16_t ow_unpack_temp(uint8_t *rom){
+  uint8_t crc = 0;
+  int16_t result;
+
+  for(int i=0; i<9; i++) crc = ow_crc8(rom[i], crc);
+  if (crc) {// wrong CRC
+    return ERR_TEMP_VAL;
+  }
+
+  msb = rom[1];
+  lsb = rom[0];
+
+  if(rom[4] == 0xff){ // DS18S20
+    result = 10 * (lsb >> 1);
+    if (msb & 0x80) // minus
+      result = -result;
+    if (lsb & 1) // 0.5
+      result += 5;
+  }else{
+    result = 10 * ((lsb >> 4) | ((msb & 7) << 4));
+    if (msb & 0x80){ // minus
+      result = -result;
+    }
+    if (lsb & 8) // 0.5
+      result += 5;
+    result += fractions[lsb & 7];
+  }
+  return result;
+}
